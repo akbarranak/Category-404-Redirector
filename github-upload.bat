@@ -1,6 +1,6 @@
 @echo off
-echo GitHub Upload Utility
-echo --------------------
+echo GitHub Upload Utility (Main Branch)
+echo ----------------------------------
 
 REM Check if git is installed
 where git >nul 2>nul
@@ -38,58 +38,65 @@ if "%REPO_NAME%"=="" (
 REM Create authenticated URL
 set AUTH_URL=https://%GITHUB_USERNAME%:%GITHUB_TOKEN%@github.com/%GITHUB_USERNAME%/%REPO_NAME%.git
 
-REM Set up git configuration if needed
-git config --get user.name >nul 2>&1
+REM Create a test file to ensure we have something to push
+echo Creating a test file to verify upload...
+echo "This is a test file created on %DATE% at %TIME%" > github-test.txt
+
+REM Check if we're in a git repository
+git rev-parse --is-inside-work-tree >nul 2>&1
 if %ERRORLEVEL% NEQ 0 (
+    echo Initializing new git repository...
+    git init
+    
     echo Setting up git user information...
     set /p GIT_NAME=Enter your name for git commits: 
     set /p GIT_EMAIL=Enter your email for git commits: 
     
     git config --local user.name "%GIT_NAME%"
     git config --local user.email "%GIT_EMAIL%"
-    echo Git user configured.
-) else (
-    echo Git user already configured.
-)
-
-REM Check if we're in a git repository
-git rev-parse --is-inside-work-tree >nul 2>nul
-if %ERRORLEVEL% NEQ 0 (
-    echo Initializing new git repository...
-    git init
     
     echo Setting up remote repository...
     git remote add origin %AUTH_URL%
-    
-    echo Creating main branch...
-    git branch -M main
-    set BRANCH_NAME=main
 ) else (
     echo Git repository already initialized.
     
     REM Update remote URL with authentication
     echo Updating remote URL with authentication...
     git remote set-url origin %AUTH_URL%
-    
-    REM Get current branch name
-    for /f "tokens=*" %%a in ('git rev-parse --abbrev-ref HEAD') do set BRANCH_NAME=%%a
-    echo Current branch: %BRANCH_NAME%
+)
+
+REM Force create and checkout main branch
+echo Ensuring we're on the main branch...
+git checkout -B main
+if %ERRORLEVEL% NEQ 0 (
+    echo Error: Failed to create/checkout main branch.
+    pause
+    exit /b 1
+)
+
+REM Check for .gitignore that might be excluding files
+if exist .gitignore (
+    echo Warning: .gitignore file found. Checking if it's excluding files...
+    type .gitignore
+    echo.
+    echo If your files are listed in .gitignore, they won't be uploaded.
 )
 
 REM Add all changes
-echo Adding all changes...
-git add .
-
-REM Get commit message from user
-set /p COMMIT_MESSAGE=Enter commit message (or press Enter for default): 
-if "%COMMIT_MESSAGE%"=="" set COMMIT_MESSAGE=Update files
+echo Adding all files to staging...
+git add -A
+echo.
+echo Files being added:
+git status --short
 
 REM Commit changes
+echo.
 echo Committing changes...
-git commit -m "%COMMIT_MESSAGE%"
+git commit -m "Upload files to GitHub"
 if %ERRORLEVEL% NEQ 0 (
+    echo No changes to commit or commit failed.
     echo Trying to commit with --allow-empty...
-    git commit --allow-empty -m "%COMMIT_MESSAGE%"
+    git commit --allow-empty -m "Upload files to GitHub"
     if %ERRORLEVEL% NEQ 0 (
         echo Error: Failed to commit changes.
         pause
@@ -97,21 +104,32 @@ if %ERRORLEVEL% NEQ 0 (
     )
 )
 
-REM Push to remote
-echo Pushing to GitHub...
-git push -f -u origin %BRANCH_NAME%
+REM Push to remote with detailed output
+echo.
+echo Pushing to GitHub main branch...
+git push -v -f origin main
 if %ERRORLEVEL% NEQ 0 (
     echo Error: Failed to push to GitHub.
-    echo This could be due to:
-    echo - No internet connection
-    echo - Invalid credentials
-    echo - Repository doesn't exist
-    echo - Other GitHub API issues
+    echo.
+    echo Troubleshooting:
+    echo 1. Verify the repository exists at: https://github.com/%GITHUB_USERNAME%/%REPO_NAME%
+    echo 2. Check that your personal access token has 'repo' permissions
+    echo 3. Try creating the repository on GitHub first if it doesn't exist
     pause
     exit /b 1
 )
 
+echo.
 echo Success! Your files have been uploaded to GitHub.
 echo Repository: https://github.com/%GITHUB_USERNAME%/%REPO_NAME%
-echo Branch: %BRANCH_NAME%
+echo Branch: main
+echo.
+echo IMPORTANT: If you still don't see your files on GitHub:
+echo 1. Make sure you're looking at the main branch on GitHub
+echo 2. Try refreshing the page (press Ctrl+F5)
+echo 3. Check if there are any files in this directory that aren't excluded by .gitignore
+echo.
+echo Current directory contents:
+dir /b
+
 pause
