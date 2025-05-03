@@ -10,8 +10,47 @@ if %ERRORLEVEL% NEQ 0 (
     exit /b 1
 )
 
-REM Set your GitHub repository URL here (EDIT THIS)
-set REPO_URL=https://github.com/akbarranak/Category-404-Redirector.git
+REM Get authentication information
+echo Setting up GitHub authentication...
+set /p GITHUB_USERNAME=Enter your GitHub username: 
+set /p GITHUB_TOKEN=Enter your GitHub personal access token: 
+
+if "%GITHUB_USERNAME%"=="" (
+    echo Error: Username cannot be empty.
+    pause
+    exit /b 1
+)
+
+if "%GITHUB_TOKEN%"=="" (
+    echo Error: Personal access token cannot be empty.
+    pause
+    exit /b 1
+)
+
+REM Set repository information
+set /p REPO_NAME=Enter repository name (e.g., Category-404-Redirector): 
+if "%REPO_NAME%"=="" (
+    echo Error: Repository name cannot be empty.
+    pause
+    exit /b 1
+)
+
+REM Create authenticated URL
+set AUTH_URL=https://%GITHUB_USERNAME%:%GITHUB_TOKEN%@github.com/%GITHUB_USERNAME%/%REPO_NAME%.git
+
+REM Set up git configuration if needed
+git config --get user.name >nul 2>&1
+if %ERRORLEVEL% NEQ 0 (
+    echo Setting up git user information...
+    set /p GIT_NAME=Enter your name for git commits: 
+    set /p GIT_EMAIL=Enter your email for git commits: 
+    
+    git config --local user.name "%GIT_NAME%"
+    git config --local user.email "%GIT_EMAIL%"
+    echo Git user configured.
+) else (
+    echo Git user already configured.
+)
 
 REM Check if we're in a git repository
 git rev-parse --is-inside-work-tree >nul 2>nul
@@ -20,12 +59,16 @@ if %ERRORLEVEL% NEQ 0 (
     git init
     
     echo Setting up remote repository...
-    git remote add origin %REPO_URL%
+    git remote add origin %AUTH_URL%
     
     echo Creating main branch...
     git branch -M main
 ) else (
     echo Git repository already initialized.
+    
+    REM Update remote URL with authentication
+    echo Updating remote URL with authentication...
+    git remote set-url origin %AUTH_URL%
 )
 
 REM Add all changes
@@ -40,20 +83,10 @@ REM Commit changes
 echo Committing changes...
 git commit -m "%COMMIT_MESSAGE%"
 if %ERRORLEVEL% NEQ 0 (
-    echo Error: Failed to commit changes.
-    echo This might be because git needs your name and email configured.
-    
-    echo Setting up git configuration...
-    set /p GIT_NAME=Enter your name: 
-    set /p GIT_EMAIL=Enter your email: 
-    
-    git config user.name "%GIT_NAME%"
-    git config user.email "%GIT_EMAIL%"
-    
-    echo Trying commit again...
-    git commit -m "%COMMIT_MESSAGE%"
+    echo Trying to commit with --allow-empty...
+    git commit --allow-empty -m "%COMMIT_MESSAGE%"
     if %ERRORLEVEL% NEQ 0 (
-        echo Error: Failed to commit changes again.
+        echo Error: Failed to commit changes.
         pause
         exit /b 1
     )
@@ -61,23 +94,18 @@ if %ERRORLEVEL% NEQ 0 (
 
 REM Push to remote
 echo Pushing to GitHub...
-git push -u origin main
+git push -f -u origin main
 if %ERRORLEVEL% NEQ 0 (
-    echo First push failed. You may need to authenticate.
-    echo Please enter your GitHub credentials when prompted.
-    
-    REM Try again with credential prompt
-    git push -u origin main
-    if %ERRORLEVEL% NEQ 0 (
-        echo Error: Failed to push to GitHub.
-        echo This could be due to:
-        echo - No internet connection
-        echo - Authentication issues
-        echo - Remote branch protection
-        pause
-        exit /b 1
-    )
+    echo Error: Failed to push to GitHub.
+    echo This could be due to:
+    echo - No internet connection
+    echo - Invalid credentials
+    echo - Repository doesn't exist
+    echo - Other GitHub API issues
+    pause
+    exit /b 1
 )
 
 echo Success! Your files have been uploaded to GitHub.
+echo Repository: https://github.com/%GITHUB_USERNAME%/%REPO_NAME%
 pause
