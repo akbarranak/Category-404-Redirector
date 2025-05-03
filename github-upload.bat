@@ -63,12 +63,17 @@ if %ERRORLEVEL% NEQ 0 (
     
     echo Creating main branch...
     git branch -M main
+    set BRANCH_NAME=main
 ) else (
     echo Git repository already initialized.
     
     REM Update remote URL with authentication
     echo Updating remote URL with authentication...
     git remote set-url origin %AUTH_URL%
+    
+    REM Get current branch name
+    for /f "tokens=*" %%a in ('git rev-parse --abbrev-ref HEAD') do set BRANCH_NAME=%%a
+    echo Current branch: %BRANCH_NAME%
 )
 
 REM Add all changes
@@ -94,7 +99,7 @@ if %ERRORLEVEL% NEQ 0 (
 
 REM Push to remote
 echo Pushing to GitHub...
-git push -f -u origin main
+git push -f -u origin %BRANCH_NAME%
 if %ERRORLEVEL% NEQ 0 (
     echo Error: Failed to push to GitHub.
     echo This could be due to:
@@ -108,4 +113,5 @@ if %ERRORLEVEL% NEQ 0 (
 
 echo Success! Your files have been uploaded to GitHub.
 echo Repository: https://github.com/%GITHUB_USERNAME%/%REPO_NAME%
+echo Branch: %BRANCH_NAME%
 pause
