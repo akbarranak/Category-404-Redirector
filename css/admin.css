@@ -1,0 +1,435 @@
+/* Admin Styles for Category 404 Redirector */
+
+/* Main container layout */
+.popup-settings-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+.popup-settings-form {
+  flex: 1;
+  min-width: 500px;
+}
+
+.popup-preview {
+  flex: 1;
+  min-width: 500px;
+  position: sticky;
+  top: 32px; /* Account for WP admin bar */
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+}
+
+/* Preview container */
+.preview-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.popup-preview-device {
+  flex: 1;
+  min-width: 300px;
+}
+
+.preview-frame {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 20px;
+  background-color: #f5f5f5;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  max-height: 600px; /* Limit height to prevent overflow */
+  overflow-y: auto; /* Add scrollbar if content exceeds height */
+  position: relative;
+  min-height: 500px;
+}
+
+.preview-frame.mobile {
+  max-width: 375px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+
+/* Popup Preview Styles */
+.preview-popup {
+  transform: scale(0.8);
+  transform-origin: top center;
+  margin: 0;
+  display: block !important;
+  visibility: visible !important;
+}
+
+/* Admin Form Styles */
+.form-table th {
+  width: 200px;
+}
+
+#image_preview {
+  margin-top: 10px;
+  max-width: 300px;
+  border: 1px solid #ddd;
+  padding: 5px;
+  background-color: #f9f9f9;
+  border-radius: 4px;
+}
+
+/* Color picker adjustments */
+.wp-picker-container {
+  display: inline-block;
+}
+
+.wp-color-result {
+  margin-bottom: 0 !important;
+}
+
+/* Import/Export container */
+.import-export-container {
+  background-color: #f9f9f9;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.import-export-container h4 {
+  margin-top: 0;
+}
+
+/* Category mapping table */
+.category-mapping-container table {
+  margin-top: 15px;
+}
+
+/* Tabs styling */
+.nav-tab-wrapper {
+  margin-bottom: 20px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 1200px) {
+  .popup-settings-container {
+    flex-direction: column;
+  }
+
+  .popup-settings-form,
+  .popup-preview {
+    min-width: 100%;
+  }
+}
+
+/* Preview popup styles */
+.preview-popup .c404r-popup-overlay {
+  position: relative !important;
+  height: auto !important;
+  min-height: 400px !important;
+  padding: 0 !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
+  display: flex !important;
+  visibility: visible !important;
+}
+
+.preview-popup .c404r-popup {
+  max-height: none !important;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5) !important;
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Make the preview buttons non-functional */
+.preview-popup button {
+  pointer-events: none;
+}
+
+/* Make sure the popup overlay is visible */
+.c404r-popup-overlay {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Ensure the popup content is visible */
+.c404r-popup {
+  display: flex !important;
+  visibility: visible !important;
+}
+
+/* Mobile preview adjustments */
+.preview-frame.mobile .preview-popup {
+  transform: scale(0.6);
+}
+
+/* Add a label to indicate this is a preview */
+.preview-frame::before {
+  content: "Preview";
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: white;
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-size: 12px;
+  z-index: 10;
+}
+
+/* Fix for preview visibility */
+#preview-popup-desktop,
+#preview-popup-mobile {
+  min-height: 600px !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+/* Fix for preview popup visibility */
+#preview-popup-desktop .preview-popup,
+#preview-popup-mobile .preview-popup {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+/* Fix for preview popup overlay */
+#preview-popup-desktop .c404r-popup-overlay,
+#preview-popup-mobile .c404r-popup-overlay {
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+  background-color: rgba(0, 0, 0, 0.7) !important;
+}
+
+/* Fix for preview popup container */
+#preview-popup-desktop .c404r-popup,
+#preview-popup-mobile .c404r-popup {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 11 !important;
+  position: relative !important;
+  margin: auto !important;
+}
+
+/* Ensure the preview frame has enough space */
+.preview-frame {
+  min-height: 600px !important;
+  overflow: visible !important;
+  padding-bottom: 50px !important;
+}
+
+/* Ensure the popup preview is not hidden */
+.preview-popup {
+  transform: scale(0.8) !important;
+  transform-origin: top center !important;
+  margin: 0 !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  z-index: 10 !important;
+}
+
+/* Make sure the popup is visible in the preview */
+.preview-frame .c404r-popup-overlay,
+.preview-frame .c404r-popup {
+  display: flex !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Ensure the preview is not hidden by other elements */
+.popup-preview {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Fix for mobile preview */
+.preview-frame.mobile {
+  overflow: visible !important;
+}
+
+.preview-frame.mobile .preview-popup {
+  transform: scale(0.6) !important;
+}
+
+/* Force visibility for preview elements */
+.preview-frame * {
+  visibility: visible !important;
+  display: block !important;
+}
+
+/* Make preview sticky on scroll */
+.popup-preview-sticky {
+  position: sticky;
+  top: 32px; /* WP admin bar height */
+}
+
+/* Preview tabs */
+.preview-tabs {
+  display: flex;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #ccc;
+}
+
+.preview-tab {
+  padding: 8px 15px;
+  cursor: pointer;
+  background: #f1f1f1;
+  border: 1px solid #ccc;
+  border-bottom: none;
+  margin-right: 5px;
+  border-radius: 3px 3px 0 0;
+}
+
+.preview-tab.active {
+  background: #fff;
+  border-bottom: 1px solid #fff;
+  margin-bottom: -1px;
+  font-weight: bold;
+}
+
+.preview-content {
+  display: none;
+}
+
+.preview-content.active {
+  display: block;
+}
+
+/* Force update button */
+.force-update-preview {
+  margin-bottom: 10px !important;
+}
+
+/* Add styles for the preview buttons */
+.popup-preview-buttons {
+  margin-top: 20px;
+  padding: 15px;
+  background: #f9f9f9;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+}
+
+.preview-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Style for the popup preview container */
+#popup-preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999999;
+}
+
+#close-preview {
+  background: #fff;
+  color: #333;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+#close-preview:hover {
+  background: #f1f1f1;
+}
+
+/* Remove the old preview styles that are no longer needed */
+.popup-preview,
+.preview-container,
+.popup-preview-device,
+.preview-frame,
+.preview-popup {
+  /* These styles are no longer needed */
+}
+
+/* Add these styles at the end of the file */
+
+/* Ensure the popup preview container is visible and properly positioned */
+#popup-preview-container {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background-color: rgba(0, 0, 0, 0.8) !important;
+  z-index: 999999 !important;
+  display: none;
+}
+
+.popup-preview-content {
+  position: relative !important;
+  width: 100% !important;
+  height: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 20px !important;
+  box-sizing: border-box !important;
+}
+
+#preview-popup-content {
+  position: relative !important;
+  z-index: 1000000 !important;
+}
+
+#close-preview {
+  position: fixed !important;
+  top: 20px !important;
+  right: 20px !important;
+  background: #fff !important;
+  color: #333 !important;
+  padding: 8px 15px !important;
+  border-radius: 3px !important;
+  cursor: pointer !important;
+  z-index: 1000001 !important;
+  font-weight: bold !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+#close-preview:hover {
+  background: #f1f1f1 !important;
+}
+
+/* Make the preview buttons more prominent */
+#check_pc_popup,
+#check_mobile_popup {
+  padding: 8px 15px !important;
+  font-weight: bold !important;
+  margin-right: 10px !important;
+}
+
+/* Ensure popup content is visible */
+#preview-popup-content .c404r-popup-overlay {
+  display: flex !important;
+  visibility: visible !important;
+  position: relative !important;
+}
+
+#preview-popup-content .c404r-popup {
+  display: flex !important;
+  visibility: visible !important;
+  max-width: 100% !important;
+}
